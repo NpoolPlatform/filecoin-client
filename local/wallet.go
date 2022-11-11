@@ -2,12 +2,13 @@ package local
 
 import (
 	"fmt"
+
+	"github.com/NpoolPlatform/filecoin-client/sigs"
+	_ "github.com/NpoolPlatform/filecoin-client/sigs/bls"
+	_ "github.com/NpoolPlatform/filecoin-client/sigs/secp"
+	"github.com/NpoolPlatform/filecoin-client/types"
 	"github.com/filecoin-project/go-address"
 	"github.com/filecoin-project/go-state-types/crypto"
-	"github.com/myxtype/filecoin-client/sigs"
-	"github.com/myxtype/filecoin-client/types"
-	// _ "github.com/myxtype/filecoin-client/sigs/bls"
-	_ "github.com/myxtype/filecoin-client/sigs/secp"
 )
 
 // WalletNew creates a new address in the wallet with the given sigType.

@@ -2,8 +2,9 @@ package filecoin
 
 import (
 	"context"
+
+	"github.com/NpoolPlatform/filecoin-client/types"
 	"github.com/ipfs/go-cid"
-	"github.com/myxtype/filecoin-client/types"
 	"github.com/shopspring/decimal"
 )
 

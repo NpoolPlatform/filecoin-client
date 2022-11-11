@@ -1,6 +1,6 @@
 # filecoin-client
 
-[![goproxy.cn](https://goproxy.cn/stats/github.com/myxtype/filecoin-client/badges/download-count.svg)](https://goproxy.cn)
+[![goproxy.cn](https://goproxy.cn/stats/github.com/NpoolPlatform/filecoin-client/badges/download-count.svg)](https://goproxy.cn)
 
 需要自行部署Lotus Node节点：https://lotu.sh/en+getting-started
 
@@ -12,7 +12,7 @@
 
 # 安装
 
-`go get github.com/myxtype/filecoin-client`
+`go get github.com/NpoolPlatform/filecoin-client`
 
 # 使用
 
@@ -22,7 +22,7 @@ package main
 import (
 	"context"
 	"github.com/filecoin-project/go-address"
-	"github.com/myxtype/filecoin-client"
+	"github.com/NpoolPlatform/filecoin-client"
 )
 
 func main() {
@@ -52,9 +52,9 @@ import (
 	"encoding/hex"
 	"github.com/filecoin-project/go-address"
 	"github.com/filecoin-project/go-state-types/abi"
-	"github.com/myxtype/filecoin-client"
-	"github.com/myxtype/filecoin-client/local"
-	"github.com/myxtype/filecoin-client/types"
+	"github.com/NpoolPlatform/filecoin-client"
+	"github.com/NpoolPlatform/filecoin-client/local"
+	"github.com/NpoolPlatform/filecoin-client/types"
 	"github.com/shopspring/decimal"
 )
 
@@ -125,8 +125,6 @@ func main() {
 }
 
 ```
-
-> 暂时不支持`bls`类型，仅支持`secp256k1`，所以离线签名所有类型请选择`types.KTSecp256k1`
 
 > 私钥存储在数据库请进行加密存储，建议进行AES加密，将AES密钥放在代码中，别放配置文件，编译到执行文件中。
 

@@ -2,9 +2,10 @@ package local
 
 import (
 	"encoding/hex"
-	"github.com/filecoin-project/go-address"
-	"github.com/myxtype/filecoin-client/types"
 	"testing"
+
+	"github.com/NpoolPlatform/filecoin-client/types"
+	"github.com/filecoin-project/go-address"
 )
 
 func TestWalletNew(t *testing.T) {

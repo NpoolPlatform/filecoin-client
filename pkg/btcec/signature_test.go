@@ -9,9 +9,9 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"math/big"
-	"reflect"
 	"testing"
 )
 
@@ -568,7 +568,7 @@ func TestRecoverCompact(t *testing.T) {
 		pub, _, err := RecoverCompact(S256(), sig, msg)
 
 		// Verify that returned error matches as expected.
-		if !reflect.DeepEqual(test.err, err) {
+		if !errors.Is(test.err, err) {
 			t.Errorf("unexpected error returned from pubkey "+
 				"recovery #%d: wanted %v, got %v",
 				i, test.err, err)

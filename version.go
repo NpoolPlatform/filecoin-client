@@ -2,7 +2,8 @@ package filecoin
 
 import (
 	"context"
-	"github.com/myxtype/filecoin-client/types"
+
+	"github.com/NpoolPlatform/filecoin-client/types"
 )
 
 // Version Get Lotus Node version
