@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
 
 	"github.com/NpoolPlatform/filecoin-client"
 	"github.com/NpoolPlatform/filecoin-client/local"
@@ -13,67 +14,89 @@ import (
 )
 
 func main() {
-	// 设置网络类型
-	address.CurrentNetwork = address.Mainnet
+	// bls
+	{
+		_ki, _addr, err := local.WalletNew(types.KTBLS)
+		if err != nil {
+			panic(err)
+		}
 
-	// 生产新的地址
-	// 新地址有转入fil才激活，不然没法用
-	ki, addr, err := local.WalletNew(types.KTSecp256k1)
-	if err != nil {
-		panic(err)
+		fmt.Println(_ki, _addr)
+
+		client := filecoin.NewClient("http://127.0.0.1:1234/rpc/v0", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.FlpKwfmeYGI84-tpztXC0gkaNwu_6ddf9xH1BYuwTFc")
+
+		addr, _ := address.NewFromString("t3rasdrenn22jnwwivzwobf3qz67hh2sprng4tepkwflsfygrcz5u5e5v3egbvxatbpjz54y7ibnpwrucqhmmq")
+		bal, err := client.WalletBalance(context.Background(), addr)
+		if err != nil {
+			panic(err)
+		}
+
+		println(bal.String())
 	}
+	// secp
+	{
+		// 设置网络类型
+		address.CurrentNetwork = address.Mainnet
 
-	println(hex.EncodeToString(ki.PrivateKey))
-	println(addr.String())
+		// 生产新的地址
+		// 新地址有转入fil才激活，不然没法用
+		ki, addr, err := local.WalletNew(types.KTSecp256k1)
+		if err != nil {
+			panic(err)
+		}
 
-	// 50a5e6234f5fdfc026bd889347409e11b6ef5b6034a7b0572d7e24ed1e9ba0e4
-	// f1dynqskhlixt5eswpff3a72ksprqmeompv3pbesy
+		println(hex.EncodeToString(ki.PrivateKey))
+		println(addr.String())
 
-	to, _ := address.NewFromString("f1yfi4yslez2hz3ori5grvv3xdo3xkibc4v6xjusy")
+		// 50a5e6234f5fdfc026bd889347409e11b6ef5b6034a7b0572d7e24ed1e9ba0e4
+		// f1dynqskhlixt5eswpff3a72ksprqmeompv3pbesy
 
-	// 转移0.001FIL到f1yfi4yslez2hz3ori5grvv3xdo3xkibc4v6xjusy
-	msg := &types.Message{
-		Version:    0,
-		To:         to,
-		From:       *addr,
-		Nonce:      0,
-		Value:      filecoin.FromFil(decimal.NewFromFloat(0.001)),
-		GasLimit:   0,
-		GasFeeCap:  abi.NewTokenAmount(10000),
-		GasPremium: abi.NewTokenAmount(10000),
-		Method:     0,
-		Params:     nil,
+		to, _ := address.NewFromString("f1yfi4yslez2hz3ori5grvv3xdo3xkibc4v6xjusy")
+
+		// 转移0.001FIL到f1yfi4yslez2hz3ori5grvv3xdo3xkibc4v6xjusy
+		msg := &types.Message{
+			Version:    0,
+			To:         to,
+			From:       *addr,
+			Nonce:      0,
+			Value:      filecoin.FromFil(decimal.NewFromFloat(0.001)),
+			GasLimit:   0,
+			GasFeeCap:  abi.NewTokenAmount(10000),
+			GasPremium: abi.NewTokenAmount(10000),
+			Method:     0,
+			Params:     nil,
+		}
+
+		client := filecoin.New("https://1lB5G4SmGdSTikOo7l6vYlsktdd:b58884915362a99b4fc18c2bf8af8358@filecoin.infura.io")
+
+		// 最大手续费0.0001 FIL
+		//maxFee := filecoin.FromFil(decimal.NewFromFloat(0.0001))
+
+		// 估算GasLimit
+		//msg, err = client.GasEstimateMessageGas(context.Background(), msg, &types.MessageSendSpec{MaxFee: maxFee}, nil)
+		//if err != nil {
+		//	panic(err)
+		//}
+
+		// 离线签名
+		s, err := local.WalletSignMessage(types.KTSecp256k1, ki.PrivateKey, msg)
+		if err != nil {
+			panic(err)
+		}
+
+		println(hex.EncodeToString(s.Signature.Data))
+		// 47bcbb167fd9040bd02dba02789bc7bc0463c290db1be9b07065c12a64fb84dc546bef7aedfba789d0d7ce2c4532f8fa0d2dd998985ad3ec1a8b064c26e4625a01
+
+		// 验证签名
+		if err := local.WalletVerifyMessage(s); err != nil {
+			panic(err)
+		}
+
+		mid, err := client.MpoolPush(context.Background(), s)
+		if err != nil {
+			panic(err)
+		}
+
+		println(mid.String())
 	}
-
-	client := filecoin.New("https://1lB5G4SmGdSTikOo7l6vYlsktdd:b58884915362a99b4fc18c2bf8af8358@filecoin.infura.io")
-
-	// 最大手续费0.0001 FIL
-	//maxFee := filecoin.FromFil(decimal.NewFromFloat(0.0001))
-
-	// 估算GasLimit
-	//msg, err = client.GasEstimateMessageGas(context.Background(), msg, &types.MessageSendSpec{MaxFee: maxFee}, nil)
-	//if err != nil {
-	//	panic(err)
-	//}
-
-	// 离线签名
-	s, err := local.WalletSignMessage(types.KTSecp256k1, ki.PrivateKey, msg)
-	if err != nil {
-		panic(err)
-	}
-
-	println(hex.EncodeToString(s.Signature.Data))
-	// 47bcbb167fd9040bd02dba02789bc7bc0463c290db1be9b07065c12a64fb84dc546bef7aedfba789d0d7ce2c4532f8fa0d2dd998985ad3ec1a8b064c26e4625a01
-
-	// 验证签名
-	if err := local.WalletVerifyMessage(s); err != nil {
-		panic(err)
-	}
-
-	mid, err := client.MpoolPush(context.Background(), s)
-	if err != nil {
-		panic(err)
-	}
-
-	println(mid.String())
 }

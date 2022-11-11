@@ -10,6 +10,14 @@
 
 说明请查询client_test文件。
 
+# 前置需要
+
+如需要 bls 地址的支持, 需要先安装子项目 **filecoin-ffi**
+
+```sh
+make -C extern/filecoin-ffi/Makefile clean all
+```
+
 # 安装
 
 `go get github.com/NpoolPlatform/filecoin-client`
